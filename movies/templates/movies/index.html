@@ -1,0 +1,133 @@
+{% extends 'movies/base.html' %}
+
+{% block title %}Наши фильмы{% endblock %}
+
+{% block content %}
+<!-- Общие фильмы -->
+<section class="common-section">
+    <h2>🔥 Совпадения</h2>
+
+    <div class="common-block">
+        <h3>Оба хотим посмотреть ({{ common_watchlist|length }})</h3>
+        <div class="movie-grid">
+            {% for m in common_watchlist %}
+            <div class="movie-card">
+                {% if m.poster_url %}
+                <img src="{{ m.poster_url }}" alt="{{ m.title_ru }}" loading="lazy">
+                {% endif %}
+                <div class="movie-info">
+                    <h4><a href="{% url 'movie_detail' m.kp_id %}">{{ m.title_ru }}</a></h4>
+                    {% if m.year %}<span class="year">{{ m.year }}</span>{% endif %}
+                    <div class="ratings">
+                        {% if m.user1_rating %}<span class="rating user1">{{ users_config.user1.name }}: {{ m.user1_rating }}</span>{% endif %}
+                        {% if m.user2_rating %}<span class="rating user2">{{ users_config.user2.name }}: {{ m.user2_rating }}</span>{% endif %}
+                    </div>
+                    {% if m.short_description %}
+                    <p class="description">{{ m.short_description|truncatechars:150 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="common-block">
+        <h3>Оба смотрели ({{ common_watched|length }})</h3>
+        <div class="movie-grid">
+            {% for m in common_watched %}
+            <div class="movie-card">
+                {% if m.poster_url %}
+                <img src="{{ m.poster_url }}" alt="{{ m.title_ru }}" loading="lazy">
+                {% endif %}
+                <div class="movie-info">
+                    <h4><a href="{% url 'movie_detail' m.kp_id %}">{{ m.title_ru }}</a></h4>
+                    {% if m.year %}<span class="year">{{ m.year }}</span>{% endif %}
+                    <div class="ratings">
+                        {% if m.user1_rating %}<span class="rating user1">{{ users_config.user1.name }}: {{ m.user1_rating }}</span>{% endif %}
+                        {% if m.user2_rating %}<span class="rating user2">{{ users_config.user2.name }}: {{ m.user2_rating }}</span>{% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Разделы пользователей -->
+{% for uid, udata in users.items %}
+<details class="user-spoiler" open>
+    <summary>
+        <span class="spoiler-title">{{ udata.name }}</span>
+        <span class="spoiler-count">{{ udata.watched|length }} просмотрено / {{ udata.watchlist|length }} в планах</span>
+    </summary>
+
+    <div class="spoiler-content">
+        <!-- Просмотрено -->
+        <details class="status-spoiler" open>
+            <summary>
+                <span>✅ Просмотрено ({{ udata.watched|length }})</span>
+            </summary>
+            <div class="status-content">
+                {% if udata.watched %}
+                <div class="rating-filter">
+                    <label>Оценка: <span class="rating-value-from">1</span> – <span class="rating-value-to">10</span></label>
+                    <div class="rating-sliders">
+                        <input type="range" min="1" max="10" value="1" class="rating-slider-from" data-user="{{ uid }}">
+                        <input type="range" min="1" max="10" value="10" class="rating-slider-to" data-user="{{ uid }}">
+                    </div>
+                </div>
+                <div class="movie-list">
+                    {% for m in udata.watched %}
+                    <div class="movie-row" data-rating="{{ m.user_rating|default:0 }}">
+                        {% if m.kp.poster_url %}
+                        <img src="{{ m.kp.poster_url }}" alt="" class="thumb">
+                        {% endif %}
+                        <div class="info">
+                            <a href="{% url 'movie_detail' m.kp.kp_id %}" class="title">{{ m.kp.title_ru }}</a>
+                            {% if m.kp.year %}<span class="year">{{ m.kp.year }}</span>{% endif %}
+                            {% if m.user_rating %}<span class="my-rating">★ {{ m.user_rating }}/10</span>{% endif %}
+                            {% if m.kp.short_description %}
+                            <p class="desc">{{ m.kp.short_description|truncatechars:120 }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="empty">Нет просмотренных фильмов</p>
+                {% endif %}
+            </div>
+        </details>
+
+        <!-- Буду смотреть -->
+        <details class="status-spoiler" open>
+            <summary>
+                <span>📋 Буду смотреть ({{ udata.watchlist|length }})</span>
+            </summary>
+            <div class="status-content">
+                {% if udata.watchlist %}
+                <div class="movie-list">
+                    {% for m in udata.watchlist %}
+                    <div class="movie-row">
+                        {% if m.kp.poster_url %}
+                        <img src="{{ m.kp.poster_url }}" alt="" class="thumb">
+                        {% endif %}
+                        <div class="info">
+                            <a href="{% url 'movie_detail' m.kp.kp_id %}" class="title">{{ m.kp.title_ru }}</a>
+                            {% if m.kp.year %}<span class="year">{{ m.kp.year }}</span>{% endif %}
+                            {% if m.kp.short_description %}
+                            <p class="desc">{{ m.kp.short_description|truncatechars:120 }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="empty">Нет фильмов в планах</p>
+                {% endif %}
+            </div>
+        </details>
+    </div>
+</details>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Наши фильмы{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+    <header>
+        <h1><a href="{% url 'index' %}" style="color:#fff;text-decoration:none;">🎬 Наши фильмы</a></h1>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.rating-filter').forEach(function(filterBlock) {
+            var container = filterBlock.closest('.status-content');
+            var fromSlider = filterBlock.querySelector('.rating-slider-from');
+            var toSlider = filterBlock.querySelector('.rating-slider-to');
+            var fromVal = filterBlock.querySelector('.rating-value-from');
+            var toVal = filterBlock.querySelector('.rating-value-to');
+            var rows = container.querySelectorAll('.movie-row[data-rating]');
+
+            function filter() {
+                var from = parseInt(fromSlider.value, 10);
+                var to = parseInt(toSlider.value, 10);
+
+                if (from > to) {
+                    var tmp = from;
+                    from = to;
+                    to = tmp;
+                }
+
+                if (fromVal) fromVal.textContent = from;
+                if (toVal) toVal.textContent = to;
+
+                rows.forEach(function(row) {
+                    var rating = parseInt(row.dataset.rating || '0', 10);
+                    row.style.display = (rating >= from && rating <= to) ? '' : 'none';
+                });
+            }
+
+            fromSlider.addEventListener('input', filter);
+            toSlider.addEventListener('input', filter);
+            filter();
+        });
+    });
+    </script>
+</body>
+</html>

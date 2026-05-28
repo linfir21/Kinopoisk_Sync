@@ -1,0 +1,59 @@
+{% extends 'movies/base.html' %}
+
+{% block title %}{{ movie.title_ru }}{% if movie.year %} ({{ movie.year }}){% endif %}{% endblock %}
+
+{% block content %}
+<nav><a href="{% url 'index' %}">← Назад</a></nav>
+
+<article class="movie-detail">
+    {% if movie.poster_url %}
+    <img src="{{ movie.poster_url }}" alt="{{ movie.title_ru }}" class="poster-large">
+    {% endif %}
+    
+    <div class="detail-info">
+        <h1>{{ movie.title_ru }}</h1>
+        {% if movie.title_en %}<h2 class="original">{{ movie.title_en }}</h2>{% endif %}
+        
+        <div class="meta">
+            {% if movie.year %}<span>{{ movie.year }}</span>{% endif %}
+            {% if movie.duration %}<span>{{ movie.duration }} мин.</span>{% endif %}
+            {% if movie.genres %}<span>{{ movie.genres }}</span>{% endif %}
+            {% if movie.rating_kp %}<span class="kp-rating">KP: {{ movie.rating_kp }}</span>{% endif %}
+            {% if movie.rating_imdb %}<span class="imdb-rating">IMDb: {{ movie.rating_imdb }}</span>{% endif %}
+        </div>
+        
+        {% if ratings %}
+        <div class="ratings" style="margin-bottom:1rem;">
+            {% for r in ratings %}
+            <span class="rating {% if r.uid == 'user1' %}user1{% else %}user2{% endif %}">
+                {{ r.name }}: {{ r.rating }}/10
+            </span>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        {% if movie.director %}
+        <div class="director">
+            <strong>Режиссёр:</strong> {{ movie.director }}
+        </div>
+        {% endif %}
+        
+        {% if actors %}
+        <div class="actors">
+            <strong>В ролях:</strong> {{ actors }}
+        </div>
+        {% endif %}
+        
+        {% if movie.description %}
+        <div class="description-full">
+            <h3>Описание</h3>
+            <p>{{ movie.description }}</p>
+        </div>
+        {% endif %}
+        
+        <a href="https://www.kinopoisk.ru/film/{{ movie.kp_id }}/" target="_blank" class="kp-link">
+            Открыть на Кинопоиске →
+        </a>
+    </div>
+</article>
+{% endblock %}
