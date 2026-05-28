@@ -15,14 +15,14 @@
 
 ```bash
 # 1. Клонировать репозиторий
-git clone <repo-url>
+git clone https://github.com/linfir21/Kinopoisk_Sync.git
 cd kinopoisk_sync
 
 # 2. Создать виртуальное окружение
 python -m venv venv
 
 # Windows:
-source venv\Scripts\activate
+source venv/Scripts/activate
 # Linux/macOS:
 source venv/bin/activate
 
