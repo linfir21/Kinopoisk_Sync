@@ -95,6 +95,27 @@ python manage.py runserver
 
 Сайт будет доступен по адресу [http://127.0.0.1:8000](http://127.0.0.1:8000).
 
+### Запуск в локальной сети
+
+Чтобы открыть доступ с других устройств (телефон, Smart TV и т.д.), убедись, что твой IP добавлен в `ALLOWED_HOSTS` в `kinopoisk_sync/settings.py`, и запускай сервер на всех интерфейсах:
+
+```bash
+python manage.py runserver 0.0.0.0:8000
+```
+
+Сайт будет доступен по локальному IP, например:
+```
+http://192.168.1.7:8000
+
+Локальный ip можно узнать, например через powershell 
+ipconfig  # Windows
+```
+
+> **Важно:** при первом запуске Windows может спросить разрешение доступа — разреши для частных сетей. Если доступа нет, добавь правило в фаервол (PowerShell от имени Администратора):
+> ```powershell
+> New-NetFirewallRule -DisplayName "Django Dev Server" -Direction Inbound -LocalPort 8000 -Protocol TCP -Action Allow
+> ```
+
 ## Полезные команды
 
 | Команда | Описание |
